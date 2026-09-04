@@ -1,0 +1,78 @@
+name: Notify Discord on Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  notify-discord:
+    name: Send Discord Release Notification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post to Discord Webhook
+        uses: actions/github-script@v7
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_RELEASE_WEBHOOK || 'https://discord.com/api/webhooks/1545480068837544177/18brYdRVLH2NyvwWJguv67MhbKHfGAeoBvWz0jTWLVdbKbh6C2SeQFE6lDra2DrHks7M' }}
+        with:
+          script: |
+            const webhookUrl = process.env.DISCORD_WEBHOOK_URL;
+            const release = context.payload.release;
+            const tag = release?.tag_name || 'latest';
+            const cleanVersion = tag.replace(/^v/, '');
+            const releaseUrl = release?.html_url || `https://github.com/kr3ma/dsrp-launcher-releases/releases/tag/${tag}`;
+            const downloadUrl = `https://github.com/kr3ma/dsrp-launcher-releases/releases/download/${tag}/DSRP%20Launcher-Setup-${cleanVersion}.exe`;
+
+            const payload = {
+              username: 'DSRP Launcher Updates',
+              avatar_url: 'https://media.discordapp.net/attachments/1536965968444526653/1541835741804367923/content.png?ex=6a9c38ee&is=6a9ae76e&hm=9105df6437b2ba4e58c7a858103038771255bb93353b7212a2dc45b036a9ba8c&=&format=webp&quality=lossless&width=1024&height=1024',
+              embeds: [
+                {
+                  title: `DSRP PC Launcher Update — v${cleanVersion}`,
+                  url: releaseUrl,
+                  description: `A new version of the **Downtown Street Roleplay PC Launcher** is now live and ready for download!\n\nIf you already have the launcher installed, it will automatically prompt you to update upon launch.`,
+                  color: 0x000080, // Navy Blue #000080
+                  fields: [
+                    {
+                      name: 'Version',
+                      value: `\`v${cleanVersion}\``,
+                      inline: true,
+                    },
+                    {
+                      name: 'Platform',
+                      value: '`Windows (x64)`',
+                      inline: true,
+                    },
+                    {
+                      name: 'Direct Installer Download',
+                      value: `[**Download DSRP Launcher-Setup-${cleanVersion}.exe**](${downloadUrl})`,
+                      inline: false,
+                    },
+                    {
+                      name: 'GitHub Release Notes',
+                      value: `[View Release & Assets on GitHub](${releaseUrl})`,
+                      inline: false,
+                    },
+                  ],
+                  footer: {
+                    text: 'Downtown Street Roleplay • Launcher Auto-Updater',
+                    icon_url: 'https://media.discordapp.net/attachments/1536965968444526653/1536966284938575892/image.png?ex=6a9ba565&is=6a9a53e5&hm=3beffb0b4b44ef08328ff4d99198b93a1f584f0cb562ff05c6edb611a8c8a5ab&=&format=webp&quality=lossless&width=384&height=384',
+                  },
+                  timestamp: new Date().toISOString(),
+                },
+              ],
+            };
+
+            console.log(`Sending Discord notification for release ${tag}...`);
+
+            const res = await fetch(webhookUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(payload),
+            });
+
+            if (!res.ok) {
+              const err = await res.text();
+              throw new Error(`Discord Webhook failed with status ${res.status}: ${err}`);
+            }
+
+            console.log(`Discord notification for ${tag} delivered successfully!`);
