@@ -53,6 +53,9 @@ jobs:
                       inline: false,
                     },
                   ],
+                  image: {
+                    url: 'https://cdn.discordapp.com/attachments/1536965968444526653/1545483963760517211/DSRP_Launcher_Download_Banner.jpg?ex=6a9c4f9a&is=6a9afe1a&hm=e1f4a4afd8d4a9954190e4ae1372b63119e2f349343a060a6b21b588f72a5a29&',
+                  },
                   footer: {
                     text: 'Downtown Street Roleplay • Launcher Auto-Updater',
                     icon_url: 'https://media.discordapp.net/attachments/1536965968444526653/1536966284938575892/image.png?ex=6a9ba565&is=6a9a53e5&hm=3beffb0b4b44ef08328ff4d99198b93a1f584f0cb562ff05c6edb611a8c8a5ab&=&format=webp&quality=lossless&width=384&height=384',
@@ -75,4 +78,4 @@ jobs:
               throw new Error(`Discord Webhook failed with status ${res.status}: ${err}`);
             }
 
-            console.log(`Discord notification for ${tag} delivered successfully!`);
+            console.log(`✅ Discord notification for ${tag} delivered successfully!`);
