@@ -20,7 +20,7 @@ jobs:
             const tag = release?.tag_name || 'latest';
             const cleanVersion = tag.replace(/^v/, '');
             const releaseUrl = release?.html_url || `https://github.com/kr3ma/dsrp-launcher-releases/releases/tag/${tag}`;
-            const downloadUrl = `https://github.com/kr3ma/dsrp-launcher-releases/releases/download/${tag}/DSRP%20Launcher-Setup-${cleanVersion}.exe`;
+            const downloadUrl = `https://github.com/kr3ma/dsrp-launcher-releases/releases/download/${tag}/DSRP-Launcher-Setup-${cleanVersion}.exe`;
 
             const payload = {
               username: 'DSRP Launcher Updates',
